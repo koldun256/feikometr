@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
 import AppLayout from "./AppLayout";
-import TabsSwitcher from "./TabsSwitcher";
 import LinkAnalyzer from "./LinkAnalyzer";
 import BackgroundCanvas from "./BackgroundCanvas";
 
@@ -11,15 +10,13 @@ const ManualCheck = () => (
 );
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState("link");
+  let linkTab = <LinkAnalyzer />
+  let manualTab = <>Хуй</>
 
   return (
     <>
     <BackgroundCanvas />
-    <AppLayout>
-      <TabsSwitcher activeTab={activeTab} onTabChange={setActiveTab} />
-      {activeTab === "link" ? <LinkAnalyzer /> : <ManualCheck />}
-    </AppLayout>
+    <AppLayout linkTab={linkTab} manualTab={manualTab} />
     </>
   );
 }

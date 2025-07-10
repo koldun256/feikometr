@@ -1,7 +1,7 @@
-// AppLayout.jsx
 import React from "react";
+import TabbedPanel from "./TabbedPanel";
 
-export default function AppLayout({ children }) {
+export default function AppLayout({ linkTab, manualTab }) {
   return (
     <div className="relative z-10 flex flex-col min-h-screen bg-transparent text-[#2e4029] font-retro">
       <header className="z-20 p-4 border-b border-[#2e4029] bg-[#f5f0dc]/90 backdrop-blur-sm flex flex-col md:flex-row md:items-center md:justify-between">
@@ -14,8 +14,8 @@ export default function AppLayout({ children }) {
         </div>
       </header>
 
-      <main className="z-10 flex-grow p-6 max-w-6xl mx-auto">
-        {children}
+      <main className="z-10 flex-grow px-4 py-6">
+        <TabbedPanel linkTab={linkTab} manualTab={manualTab} />
       </main>
 
       <footer className="z-20 p-4 border-t border-[#2e4029] bg-[#f5f0dc]/90 backdrop-blur-sm text-center text-sm">
