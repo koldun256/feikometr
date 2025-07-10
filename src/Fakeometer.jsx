@@ -27,7 +27,6 @@ export default function Fakeometer({ score }) {
             }}
           />
         </div>
-
       </div>
 
       {/* цифровой индикатор - по центру шкалы */}

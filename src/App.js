@@ -2,16 +2,11 @@ import React from "react";
 import AppLayout from "./AppLayout";
 import LinkAnalyzer from "./LinkAnalyzer";
 import BackgroundCanvas from "./BackgroundCanvas";
-
-const ManualCheck = () => (
-  <div className="text-center text-gray-600 mt-10">
-    Функция «Проверка отзыва» скоро будет доступна.
-  </div>
-);
+import ManualAnalyzer from "./ManualAnalyzer";
 
 export default function App() {
   let linkTab = <LinkAnalyzer />
-  let manualTab = <>Хуй</>
+  let manualTab = <ManualAnalyzer />
 
   return (
     <>

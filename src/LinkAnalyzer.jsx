@@ -1,25 +1,43 @@
 import React, { useState } from "react";
 import ReviewCard from "./ReviewCard";
 import Fakeometer from "./Fakeometer";
+import WaveLoader from "./WaveLoader";
 
 export default function LinkAnalyzer() {
   const [link, setLink] = useState("");
   const [reviews, setReviews] = useState([]);
+  const [avgReliability, setAvgReliability] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setReviews([]);
-    // fake API simulation
-    setTimeout(() => {
-      setReviews([
-        { text: "Отличный телефон, все как в описании.", score: 92 },
-        { text: "Очень много неработающих функций.", score: 87 },
-        { text: "Советую к приобретению!", score: 90 },
-      ]);
+    setAvgReliability(null);
+
+    try {
+      const response = await fetch("http://89.169.187.244:8000/detect_review_from_link", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ url: link }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Ошибка при запросе к серверу.");
+      }
+
+      const data = await response.json();
+      console.log(data);
+      setReviews(data.reviews);
+      setAvgReliability(Math.round(data.avg_reliablity * 100));
+    } catch (error) {
+      console.error("Ошибка:", error);
+      alert("Не удалось получить данные. Проверьте ссылку или попробуйте позже.");
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -43,24 +61,27 @@ export default function LinkAnalyzer() {
         </div>
       </form>
 
+      {loading ? (
+        <WaveLoader /> 
+      ) : (
+      
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2">
-          {loading ? (
-            <div>Загрузка…</div>
-          ) : (
-            <>
-              {reviews.map((r, i) => (
-                <ReviewCard key={i} text={r.text} score={r.score} />
-              ))}
-            </>
-          )}
+            {reviews.map((r) => (
+              <ReviewCard
+                key={r.review_id}
+                text={r.review_body}
+                score={Math.round(r.reliability * 100)}
+              />
+            ))}
         </div>
         <div>
-          {!loading && reviews.length > 0 && <Fakeometer score={
-            Math.round(reviews.reduce((s, r) => s + r.score, 0) / reviews.length)
-          } />}
+          {avgReliability !== null && (
+            <Fakeometer score={avgReliability} />
+          )}
         </div>
       </div>
+      )}
     </div>
   );
 }
