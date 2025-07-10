@@ -1,4 +1,3 @@
-// BackgroundCanvas.jsx
 import React, { useRef, useEffect } from "react";
 
 export default function BackgroundCanvas() {
@@ -14,20 +13,29 @@ export default function BackgroundCanvas() {
 
     let spikeActive = false;
     let spikeTimer = 0;
-    let spikeCooldown = Math.random() * 1000 + 500; // всплеск каждые 3–8 сек
+    let spikeCooldown = Math.random() * 1000 + 500;
 
     let currentAmplitude = height * 0.3;
-    const baseAmplitude = height * 0.3; // чуть шире базовая полоса
+    const baseAmplitude = height * 0.3;
     const spikeAmplitude = height * 0.8;
     const gridSize = 40;
-
     const noiseSeed = Array.from({ length: 5 }, () => Math.random() * 1000);
 
-    const draw = (t) => {
-      ctx.clearRect(0, 0, width, height);
+    const frameRate = 15; // обновление 30 раз в секунду
+    const interval = 1000 / frameRate;
+    let lastUpdate = 0;
 
-      // Grid
-      ctx.strokeStyle = "#d9d3b6";
+    const draw = (t) => {
+      if (t - lastUpdate < interval) {
+        requestAnimationFrame(draw);
+        return;
+      }
+      lastUpdate = t;
+
+      ctx.fillStyle = "#f2ecd2";
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.strokeStyle = "#cfc8a9";
       ctx.lineWidth = 1;
       for (let x = 0; x < width; x += gridSize) {
         ctx.beginPath();
@@ -42,8 +50,7 @@ export default function BackgroundCanvas() {
         ctx.stroke();
       }
 
-      // Handle spike logic
-      spikeTimer += 16;
+      spikeTimer += interval;
       if (!spikeActive && spikeTimer >= spikeCooldown) {
         spikeActive = true;
         spikeTimer = 0;
@@ -52,23 +59,20 @@ export default function BackgroundCanvas() {
       }
 
       const targetAmplitude = spikeActive ? spikeAmplitude : baseAmplitude;
-      currentAmplitude += (targetAmplitude - currentAmplitude) * 0.4; // плавное сглаживание
+      currentAmplitude += (targetAmplitude - currentAmplitude) * 0.4;
 
-      // Graph
-      ctx.strokeStyle = "#2e4029";
+      ctx.strokeStyle = "#cfc8a9";
       ctx.lineWidth = 2.5;
       ctx.beginPath();
-      const cx = width / 2;
       const cy = height / 2;
       for (let x = 0; x < width; x++) {
-        let normX = x / width;
         let y = 0;
         for (let i = 0; i < noiseSeed.length; i++) {
           const f = 0.5 + i * 0.3;
           const speed = 0.0003 + i * 0.0002;
           y += Math.sin((x + t * speed * 1000 + noiseSeed[i]) * f) * currentAmplitude * (0.3 + Math.random() * 0.2);
         }
-        y = cy + y * 0.2 + (Math.random() - 0.5) * 8; // шум в каждый момент
+        y = cy + y * 0.2 + (Math.random() - 0.5) * 8;
         if (x === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
       }
@@ -96,7 +100,7 @@ export default function BackgroundCanvas() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed top-0 left-0 w-full h-full z-0 pointer-events-none opacity-20"
+      className="fixed top-0 left-0 w-full h-full z-0 pointer-events-none bg-[#f2ecd2]"
     />
   );
 }
