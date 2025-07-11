@@ -16,13 +16,7 @@ export default function LinkAnalyzer() {
     setAvgReliability(null);
 
     try {
-      const response = await fetch("http://89.169.187.244:8000/detect_review_from_link", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ url: link }),
-      });
+      const response = await fetch(`${process.env.REACT_APP_API_BASE}/detect_review_from_link?` + new URLSearchParams({ url: link }));
 
       if (!response.ok) {
         throw new Error("Ошибка при запросе к серверу.");
@@ -31,7 +25,7 @@ export default function LinkAnalyzer() {
       const data = await response.json();
       console.log(data);
       setReviews(data.reviews);
-      setAvgReliability(Math.round(data.avg_reliablity * 100));
+      setAvgReliability(Math.round(data.avg_reliability * 100));
     } catch (error) {
       console.error("Ошибка:", error);
       alert("Не удалось получить данные. Проверьте ссылку или попробуйте позже.");

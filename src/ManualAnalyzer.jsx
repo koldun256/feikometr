@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Fakeometer from "./Fakeometer";
 
 export default function ManualAnalyzer() {
+  return <>NOT IMPLEMENTED</>
   const [text, setText] = useState("");
   const [score, setScore] = useState(null);
   const [loading, setLoading] = useState(false);
