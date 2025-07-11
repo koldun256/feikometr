@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import Fakeometer from "./Fakeometer";
+import VerdictCard from "./VerdictCard";
 
 export default function ManualAnalyzer() {
-  return <>NOT IMPLEMENTED</>
   const [text, setText] = useState("");
   const [score, setScore] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -13,13 +12,7 @@ export default function ManualAnalyzer() {
     setScore(null);
 
     try {
-      const response = await fetch("http://localhost:8000/api/analyze_text/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ review_body: text }),
-      });
+      const response = await fetch(`${process.env.REACT_APP_API_BASE}/detect_one_review?` + new URLSearchParams({ review: text }));
 
       if (!response.ok) throw new Error("Ошибка при анализе текста");
 
@@ -55,9 +48,7 @@ export default function ManualAnalyzer() {
       </form>
 
       {!loading && score !== null && (
-        <div className="max-w-xs mx-auto">
-          <Fakeometer score={score} />
-        </div>
+        <VerdictCard text={text} score={score} />
       )}
 
       {loading && (
